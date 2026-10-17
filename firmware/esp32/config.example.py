@@ -1,0 +1,14 @@
+WIFI_SSID = "YOUR_WIFI_SSID"
+WIFI_PASSWORD = "YOUR_WIFI_PASSWORD"
+FIREBASE_DATABASE_URL = "https://YOUR_PROJECT-default-rtdb.firebaseio.com"
+FIREBASE_AUTH_TOKEN = "RESTRICTED_DEVICE_TOKEN"  # Never use an admin/service-account key.
+USER_ID = "AUTHENTICATED_USER_UID"
+COIN_PULSES = {1: 1, 2: 2, 5: 5, 10: 10}  # Configure to your acceptor; this is only an example.
+COIN_WEIGHT_GRAMS = {}  # Optional measured weights, e.g. {1: 3.09}; never infer denomination from weight.
+HX711_DOUT = 4
+HX711_SCK = 5
+COIN_INPUT = 18
+CALIBRATION_FACTOR = 1.0
+WEIGHT_TOLERANCE_GRAMS = 1.0
+REPORT_INTERVAL_SECONDS = 30
+DEPOSIT_VERIFICATION_TIMEOUT_MS = 5000

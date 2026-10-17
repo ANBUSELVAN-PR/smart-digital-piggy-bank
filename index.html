@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Digital Piggy Bank</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <h1>Smart Piggy</h1>
+    </div>
+    <div>
+      <button id="logoutBtn" class="btn btn-secondary" style="display:none;">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- LOGIN -->
+    <section id="authSection" class="auth-section">
+      <div id="firebaseConfigMessage" class="error-text" hidden>
+        Firebase is not configured. Copy <code>firebase-config.example.js</code> to <code>firebase-config.js</code> and add your own Firebase web configuration.
+      </div>
+      <div class="auth-card">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="email" required />
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Login
+          </button>
+        </form>
+        <p class="auth-switch">
+          Don't have an account?
+          <button type="button" id="showSignupBtn" class="btn-link">
+            Sign Up
+          </button>
+        </p>
+      </div>
+    </section>
+
+    <!-- SIGNUP -->
+    <section id="signupSection" class="auth-section" style="display:none;">
+      <div class="auth-card">
+        <h2>Create Account</h2>
+        <form id="signupForm">
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="signupEmail" required />
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="signupPassword" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Sign Up
+          </button>
+        </form>
+        <p class="auth-switch">
+          Already have an account?
+          <button type="button" id="showLoginBtn" class="btn-link">
+            Login
+          </button>
+        </p>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboardSection" class="dashboard-section" style="display:none;">
+
+      <div id="goalAlert" class="goal-alert hidden">
+        <h3>🎉 Goal Reached!</h3>
+        <p>You have achieved your savings target.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="simulation-banner" id="simulationBanner" hidden>Simulation mode: test data is isolated from real savings.</div>
+      <div class="stats-grid">
+
+        <div class="stat-card highlight">
+          <h3>Total Savings</h3>
+          <div id="totalSavingsVal" class="stat-value">₹0.00</div>
+          <p class="stat-subtitle">
+            Last Updated:
+            <span id="lastUpdatedVal">Never</span>
+          </p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Target Amount</h3>
+          <div id="targetAmountVal" class="stat-value">₹0.00</div>
+        </div>
+
+        <div class="stat-card"><h3>Measured Weight</h3><div id="weightVal" class="stat-value">— g</div><p id="sensorStatusVal" class="stat-subtitle">Unavailable</p></div>
+        <div class="stat-card"><h3>Latest Coin</h3><div id="latestCoinVal" class="stat-value">—</div><p id="verificationVal" class="stat-subtitle">No deposit recorded</p></div>
+        <div class="stat-card"><h3>Verified Deposits</h3><div id="depositCountVal" class="stat-value">0</div><p id="deviceStatusVal" class="stat-subtitle">Unavailable</p></div>
+
+        <div class="stat-card">
+          <h3>Remaining</h3>
+          <div id="remainingAmountVal" class="stat-value">₹0.00</div>
+        </div>
+
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card"><h3>Deposit History</h3><div id="emptyHistory" class="empty-state">No recorded deposits yet.</div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Coin</th><th>Weight change</th><th>Status</th></tr></thead><tbody id="depositHistoryBody"></tbody></table></div></div>
+        <div class="card"><h3>Sensor and device notes</h3><p id="sensorErrors" class="error-text"></p><p class="empty-state">Only verified Firebase records affect the balance. Detected, rejected, and unverified events remain separate.</p></div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section">
+        <h3>Goal Progress</h3>
+        <div class="progress-bar-container">
+          <div id="progressBarFill" class="progress-bar-fill"></div>
+        </div>
+        <span id="progressPercentage">0%</span>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container card">
+        <h3>Savings History</h3>
+        <canvas id="historyChart"></canvas>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-section card">
+        <h3>Controls</h3>
+        <button id="openTargetModalBtn" class="btn btn-outline">
+          Change Target
+        </button>
+        <button id="resetSavingsBtn" class="btn btn-danger">
+          Reset Savings
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- TARGET MODAL -->
+  <div id="targetModal" class="modal">
+    <div class="modal-content">
+      <h2>Set New Target</h2>
+      <form id="targetForm">
+        <input type="number" id="newTargetAmount" min="1" step="0.01" required />
+        <button type="submit" class="btn btn-primary w-100">
+          Save Target
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Chart.js (Must load BEFORE app.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase App Script -->
+  <script type="module" src="app.js"></script>
+
+</body>
+
+</html>
